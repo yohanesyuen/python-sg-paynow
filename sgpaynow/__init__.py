@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 from pprint import pprint
 
-class paynow_qr_object(object):
+class Object(object):
     def __init__(self, object_id=None, value=''):
         self.object_id = object_id
         self.value = value
@@ -17,7 +17,7 @@ class paynow_qr_object(object):
         assert self.object_id is not None
         return f'{self.object_id:02d}{self.length:02d}{self.value}'
 
-class paynow_qr_pfi(paynow_qr_object):
+class paynow_qr_pfi(Object):
     def __init__(self):
         self.object_id = 0
 
@@ -25,7 +25,7 @@ class paynow_qr_pfi(paynow_qr_object):
     def value(self):
         return '01'
 
-class paynow_qr_poim(paynow_qr_object):
+class paynow_qr_poim(Object):
     def __init__(self):
         self.object_id = 1
 
@@ -33,15 +33,15 @@ class paynow_qr_poim(paynow_qr_object):
     def value(self):
         return '11'
 
-class paynow_qr_info(paynow_qr_object):
+class paynow_qr_info(Object):
     def __init__(self, mobile=None):
         assert mobile != None
         self.object_id=26
-        self.uid = paynow_qr_object(object_id=0, value='SG.PAYNOW')
-        self.v1 = paynow_qr_object(object_id=1, value='0')
-        self.mobile = paynow_qr_object(object_id=2, value=f'+65{mobile}')
-        self.v3 = paynow_qr_object(object_id=3, value='1')
-        self.expiry = paynow_qr_object(
+        self.uid = Object(object_id=0, value='SG.PAYNOW')
+        self.v1 = Object(object_id=1, value='0')
+        self.mobile = Object(object_id=2, value=f'+65{mobile}')
+        self.v3 = Object(object_id=3, value='1')
+        self.expiry = Object(
             object_id=4,
             value=(
                 datetime.now() + relativedelta(days=+1)
@@ -58,40 +58,40 @@ class paynow_qr_info(paynow_qr_object):
         objects.append(self.expiry)
         return ''.join([str(o) for o in objects])
 
-class paynow_qr_code(paynow_qr_object):
+class paynow_qr_code(Object):
     def __init__(self, mobile=None, amount=50, comment='NA'):
         assert mobile is not None
         self.objects = []
         self.objects.append(paynow_qr_pfi())
         self.objects.append(paynow_qr_poim())
         self.objects.append(paynow_qr_info(mobile=mobile))
-        self.objects.append(paynow_qr_object(
+        self.objects.append(Object(
             object_id=52,
             value='0000'
         ))
-        self.objects.append(paynow_qr_object(
+        self.objects.append(Object(
             object_id=53,
             value='702'
         ))
-        self.objects.append(paynow_qr_object(
+        self.objects.append(Object(
             object_id=54,
             value=f'{amount:.2f}'
         ))
-        self.objects.append(paynow_qr_object(
+        self.objects.append(Object(
             object_id=58,
             value='SG'
         ))
-        self.objects.append(paynow_qr_object(
+        self.objects.append(Object(
             object_id=59,
             value='NA'
         ))
-        self.objects.append(paynow_qr_object(
+        self.objects.append(Object(
             object_id=60,
             value='Singapore'
         ))
-        self.objects.append(paynow_qr_object(
+        self.objects.append(Object(
             object_id=62,
-            value=str(paynow_qr_object(
+            value=str(Object(
                 object_id=1,
                 value=comment
             ))
